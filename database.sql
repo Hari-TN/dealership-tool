@@ -1,4 +1,5 @@
 -- Dealership Creative Tool - Database Setup
+-- MySQL Compatible
 
 CREATE DATABASE IF NOT EXISTS dealership_tool;
 USE dealership_tool;
@@ -41,7 +42,10 @@ INSERT INTO brands (name, slug) VALUES
 INSERT INTO dealerships (brand_id, name, slug) VALUES
 (1, 'Bellad Tata', 'bellad-tata'),
 (2, 'VW Autobahn', 'vw-autobhan'),
-(2, 'VW Hubli', 'vw-hubli');
+(2, 'VW Hubli', 'vw-hubli'),
+(2, 'VW Apple', 'vw-apple'),
+(2, 'VW KUN', 'vw-kun'),
+(2, 'VW Lally', 'vw-lally');
 
 INSERT INTO dealership_assets (dealership_id, asset_type, file_path) VALUES
 (1, 'panel',      'assets/assets/Dealership-panels/Tata-dealers/Bellad-tata/template.png'),
@@ -52,7 +56,17 @@ INSERT INTO dealership_assets (dealership_id, asset_type, file_path) VALUES
 (2, 'logo_light', 'assets/assets/Dealership-panels/VW-dealers/VW-Autobhan/logo-light.png'),
 (3, 'panel',      'assets/assets/Dealership-panels/VW-dealers/VW-Hubli/template.png'),
 (3, 'logo_dark',  'assets/assets/Dealership-panels/VW-dealers/VW-Hubli/logo-dark.png'),
-(3, 'logo_light', 'assets/assets/Dealership-panels/VW-dealers/VW-Hubli/logo-light.png');
+(3, 'logo_light', 'assets/assets/Dealership-panels/VW-dealers/VW-Hubli/logo-light.png'),
+(4, 'panel',      'assets/assets/Dealership-panels/VW-dealers/VW-Autobhan/template.png'),
+(4, 'logo_dark',  'assets/assets/Dealership-panels/VW-dealers/VW-Autobhan/logo-dark.png'),
+(4, 'logo_light', 'assets/assets/Dealership-panels/VW-dealers/VW-Autobhan/logo-light.png'),
+(5, 'panel',      'assets/assets/Dealership-panels/VW-dealers/VW-Autobhan/template.png'),
+(5, 'logo_dark',  'assets/assets/Dealership-panels/VW-dealers/VW-Autobhan/logo-dark.png'),
+(5, 'logo_light', 'assets/assets/Dealership-panels/VW-dealers/VW-Autobhan/logo-light.png'),
+(6, 'panel',      'assets/assets/Dealership-panels/VW-dealers/VW-Hubli/template.png'),
+(6, 'logo_dark',  'assets/assets/Dealership-panels/VW-dealers/VW-Hubli/logo-dark.png'),
+(6, 'logo_light', 'assets/assets/Dealership-panels/VW-dealers/VW-Hubli/logo-light.png');
 
+-- Default admin (password: admin123)
 INSERT INTO admin_users (username, password) VALUES
-('admin', 'admin123');
+('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
