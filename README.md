@@ -27,7 +27,7 @@ cd dealership-tool
 sudo apt-get install -y php8.3 php8.3-gd php8.3-sqlite3 php8.3-zip
 
 ### 3. Set up the database
-php8.3 -r "$db = new PDO('sqlite:/path/to/dealership-tool/database.sqlite'); $db->exec(file_get_contents('database.sql')); echo 'Done';"
+php setup.php
 
 ### 4. Set permissions
 chmod 777 uploads output
