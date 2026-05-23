@@ -19,9 +19,11 @@ $brands = $pdo->query("SELECT id, name FROM brands ORDER BY name")->fetchAll(PDO
 <body>
 <div class="container">
     <header>
+    <div>
         <h1>Dealership Creative Tool</h1>
         <p>Generate dealership creatives in bulk</p>
-        <a href="logout.php" class="logout-btn">Logout</a>
+    </div>
+    <a href="logout.php" class="logout-btn">Logout</a>
     </header>
     <div class="form-card">
 

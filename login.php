@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="container">
+<div class="login-wrapper">
     <div class="login-card">
         <h1>Dealership Creative Tool</h1>
         <p>Sign in to continue</p>
@@ -35,17 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-group">
             <label>Username</label>
-            <input type="text" id="username" name="username" placeholder="Enter username" 
-                   style="width:100%;padding:10px 14px;border:2px solid #e0e0e0;border-radius:8px;font-size:1rem">
+            <input type="text" id="username" name="username" placeholder="Enter username">
         </div>
         <div class="form-group">
             <label>Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter password"
-                   style="width:100%;padding:10px 14px;border:2px solid #e0e0e0;border-radius:8px;font-size:1rem">
+            <input type="password" id="password" name="password" placeholder="Enter password">
         </div>
-        <button onclick="doLogin()" style="width:100%;padding:14px;background:#4361ee;color:white;border:none;border-radius:8px;font-size:1.1rem;font-weight:600;cursor:pointer">
-            Login
-        </button>
+        <button onclick="doLogin()">Login</button>
     </div>
 </div>
 <script>
