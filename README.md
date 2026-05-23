@@ -47,6 +47,28 @@ http://localhost:8000
 ## AI Feature
 The tool uses brightness analysis of the background image to automatically position the dealership panel — placing it higher when the bottom is dark, and lower when the bottom is bright — ensuring the panel never overlaps key visual elements.
 
+## Approach & Assumptions
+
+### Approach
+1. Built with PHP + SQLite for zero-dependency setup
+2. PHP GD library handles all image compositing — background scaling, panel overlay, logo placement
+3. Bulk generation loops through each selected dealership and each selected format
+4. ZIP packaging allows downloading all creatives at once
+
+### Assumptions
+- Dealership panels are PNG files with transparency
+- Background images are JPG or PNG
+- Logo files are PNG with transparent background
+- The tool runs on PHP 8.3 with GD, SQLite, and ZIP extensions
+- Asset files are stored in `assets/assets/` as provided in the assignment zip
+
+### Dependencies
+- PHP 8.3
+- php8.3-gd (image processing)
+- php8.3-sqlite3 (database)
+- php8.3-zip (ZIP file generation)
+- No external libraries or composer packages required
+
 ## Project Structure
 ```
 dealership-tool/
@@ -69,5 +91,6 @@ dealership-tool/
 ├── index.php               # Main UI
 ├── login.php               # Admin login
 ├── logout.php              # Logout
-└── README.md
+├── README.md              
+└── setup.php
 ```
