@@ -48,17 +48,26 @@ http://localhost:8000
 The tool uses brightness analysis of the background image to automatically position the dealership panel — placing it higher when the bottom is dark, and lower when the bottom is bright — ensuring the panel never overlaps key visual elements.
 
 ## Project Structure
+```
 dealership-tool/
-├── index.php         # Main UI
-├── login.php         # Admin login
-├── logout.php        # Logout
-├── generate.php      # Image generation engine
 ├── api/
-│   ├── brands.php
-│   └── dealerships.php
-├── assets/           # Panels and logos
-├── uploads/          # Temporary uploads
-├── output/           # Generated creatives
-├── css/style.css
-├── js/app.js
-└── database.sql
+│   ├── brands.php          # Returns brands list as JSON
+│   └── dealerships.php     # Returns dealerships by brand as JSON
+├── assets/assets/
+│   ├── Dealership-panels/  # Panel PNGs per dealership
+│   ├── Logos/              # Brand logos
+│   └── Sample-input-images/
+├── css/
+│   └── style.css
+├── js/
+│   └── app.js
+├── output/                 # Generated creatives saved here
+├── uploads/                # Temporary background uploads
+├── database.sql            # MySQL schema and seed data
+├── database.sqlite         # SQLite database (runtime)
+├── generate.php            # Image generation engine
+├── index.php               # Main UI
+├── login.php               # Admin login
+├── logout.php              # Logout
+└── README.md
+```
