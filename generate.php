@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__FILE__) . '/config.php';
 header('Content-Type: application/json');
 
 $baseDir   = dirname(__FILE__) . '/';
@@ -180,33 +181,77 @@ echo json_encode([
     'files'    => $fileList,
 ]);
 
-// Panel Positioning
+// Panel Positioning using Groq AI
 function smartPanelPosition($image, $canvasW, $canvasH) {
-    $sampleY     = (int)($canvasH * 0.6);
     $sampleStepX = max(1, (int)($canvasW / 20));
-    $sampleStepY = max(1, (int)($canvasH * 0.4 / 10));
+    $sampleStepY = max(1, (int)($canvasH / 20));
 
-    $totalBrightness = 0;
-    $samples         = 0;
+    $topBrightness    = 0;
+    $bottomBrightness = 0;
+    $topSamples       = 0;
+    $bottomSamples    = 0;
 
-    for ($y = $sampleY; $y < $canvasH; $y += $sampleStepY) {
+    for ($y = 0; $y < $canvasH / 2; $y += $sampleStepY) {
         for ($x = 0; $x < $canvasW; $x += $sampleStepX) {
-            $rgb   = imagecolorat($image, $x, $y);
-            $r     = ($rgb >> 16) & 0xFF;
-            $g     = ($rgb >> 8)  & 0xFF;
-            $b     = $rgb & 0xFF;
-            $totalBrightness += (0.299 * $r + 0.587 * $g + 0.114 * $b);
-            $samples++;
+            $rgb = imagecolorat($image, $x, $y);
+            $r = ($rgb >> 16) & 0xFF;
+            $g = ($rgb >> 8)  & 0xFF;
+            $b = $rgb & 0xFF;
+            $topBrightness += (0.299 * $r + 0.587 * $g + 0.114 * $b);
+            $topSamples++;
         }
     }
 
-    $avgBrightness = $samples > 0 ? $totalBrightness / $samples : 128;
-
-    if ($avgBrightness > 180) {
-        return (int)($canvasH * 0.78);
-    } elseif ($avgBrightness > 100) {
-        return (int)($canvasH * 0.72);
-    } else {
-        return (int)($canvasH * 0.68);
+    for ($y = (int)($canvasH / 2); $y < $canvasH; $y += $sampleStepY) {
+        for ($x = 0; $x < $canvasW; $x += $sampleStepX) {
+            $rgb = imagecolorat($image, $x, $y);
+            $r = ($rgb >> 16) & 0xFF;
+            $g = ($rgb >> 8)  & 0xFF;
+            $b = $rgb & 0xFF;
+            $bottomBrightness += (0.299 * $r + 0.587 * $g + 0.114 * $b);
+            $bottomSamples++;
+        }
     }
+
+    $avgTop    = $topSamples > 0 ? $topBrightness / $topSamples : 128;
+    $avgBottom = $bottomSamples > 0 ? $bottomBrightness / $bottomSamples : 128;
+
+    return aiDecidePanelPosition($avgTop, $avgBottom, $canvasH);
+}
+
+function aiDecidePanelPosition($avgTop, $avgBottom, $canvasH) {
+    $apiKey = GROQ_API_KEY;
+
+    $prompt = "I have a background image for a car dealership creative. Top half brightness: {$avgTop}/255, Bottom half brightness: {$avgBottom}/255. Canvas height: {$canvasH}px. I need to place a dealership panel that is 28% of canvas height. What Y coordinate in pixels should I place it to avoid the busiest part of the image? Reply with ONLY a single integer.";
+
+    $data = json_encode([
+        'model'    => 'llama-3.1-8b-instant',
+        'messages' => [['role' => 'user', 'content' => $prompt]],
+        'max_tokens' => 10
+    ]);
+
+    $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $apiKey
+    ]);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    if ($response) {
+        $result = json_decode($response, true);
+        $text   = trim($result['choices'][0]['message']['content'] ?? '');
+        $y      = intval(preg_replace('/[^0-9]/', '', $text));
+        if ($y > 0 && $y < $canvasH) {
+            return $y;
+        }
+    }
+
+    if ($avgBottom > 180) return (int)($canvasH * 0.78);
+    elseif ($avgBottom > 100) return (int)($canvasH * 0.72);
+    else return (int)($canvasH * 0.68);
 }

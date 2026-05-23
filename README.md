@@ -15,7 +15,7 @@ A web-based tool to automate generation of dealership creatives by combining bra
 ## Requirements
 - PHP 8.3
 - SQLite (built-in)
-- PHP extensions: gd, pdo_sqlite, zip
+- PHP extensions: gd, pdo_sqlite, zip, curl
 
 ## Setup Instructions
 
@@ -24,10 +24,12 @@ git clone https://github.com/Hari-TN/dealership-tool.git
 cd dealership-tool
 
 ### 2. Install PHP extensions
-sudo apt-get install -y php8.3 php8.3-gd php8.3-sqlite3 php8.3-zip
+sudo apt-get install -y php8.3 php8.3-gd php8.3-sqlite3 php8.3-zip php8.3-curl
 
-### 3. Set up the database
-php setup.php
+### 3. Add Groq API key
+cp config.php.example config.php
+Edit `config.php` and replace `your_groq_api_key_here` with your actual key.
+Get a free key at: https://console.groq.com
 
 ### 4. Set permissions
 chmod 777 uploads output
@@ -45,7 +47,18 @@ http://localhost:8000
 | Password | admin123 |
 
 ## AI Feature
-The tool uses brightness analysis of the background image to automatically position the dealership panel — placing it higher when the bottom is dark, and lower when the bottom is bright — ensuring the panel never overlaps key visual elements.
+The tool uses **Groq AI (LLaMA 3.1)** for intelligent panel positioning:
+
+1. **Image Analysis** — samples pixel brightness across top and bottom halves of the background image
+2. **AI Decision** — sends brightness data to Groq AI (LLaMA 3.1-8b) which decides the optimal Y coordinate for panel placement
+3. **Smart Positioning** — places the dealership panel where it least interferes with the main subject
+4. **Fallback** — if AI API is unavailable, falls back to built-in brightness analysis
+
+To use your own Groq API key, update `config.php`:
+```php
+define('GROQ_API_KEY', 'your_key_here');
+```
+Get a free key at: https://console.groq.com
 
 ## Approach & Assumptions
 
@@ -67,6 +80,7 @@ The tool uses brightness analysis of the background image to automatically posit
 - php8.3-gd (image processing)
 - php8.3-sqlite3 (database)
 - php8.3-zip (ZIP file generation)
+- php8.3-curl (Groq AI API calls)
 - No external libraries or composer packages required
 
 ## Project Structure
@@ -85,6 +99,8 @@ dealership-tool/
 │   └── app.js
 ├── output/                 # Generated creatives saved here
 ├── uploads/                # Temporary background uploads
+├── .gitignore              
+├── config.php              # API keys
 ├── database.sql            # MySQL schema and seed data
 ├── database.sqlite         # SQLite database (runtime)
 ├── generate.php            # Image generation engine
