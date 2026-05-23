@@ -47,12 +47,13 @@ http://localhost:8000
 | Password | admin123 |
 
 ## AI Feature
-The tool uses **Groq AI (LLaMA 3.1)** for intelligent panel positioning:
+The tool uses **Groq AI (LLaMA 4 Scout Vision)** for intelligent creative composition:
 
-1. **Image Analysis** — samples pixel brightness across top and bottom halves of the background image
-2. **AI Decision** — sends brightness data to Groq AI (LLaMA 3.1-8b) which decides the optimal Y coordinate for panel placement
-3. **Smart Positioning** — places the dealership panel where it least interferes with the main subject
-4. **Fallback** — if AI API is unavailable, falls back to built-in brightness analysis
+1. **Vision Analysis** — sends actual image thumbnails to LLaMA 4 Scout (multimodal vision model)
+2. **Smart Logo Placement** — AI analyses the background image and decides left/right corner or skips if background already has branding
+3. **Auto Logo Skip** — if background already contains logos or watermarks, AI automatically skips adding another logo
+4. **Background Adjustment** — AI suggests brightness/contrast tweaks for better panel readability
+5. **Fallback** — if AI API is unavailable, falls back to built-in brightness analysis
 
 To use your own Groq API key, update `config.php`:
 ```php
