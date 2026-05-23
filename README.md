@@ -20,7 +20,7 @@ A web-based tool to automate generation of dealership creatives by combining bra
 ## Setup Instructions
 
 ### 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/dealership-tool.git
+git clone https://github.com/Hari-TN/dealership-tool.git
 cd dealership-tool
 
 ### 2. Install PHP extensions
