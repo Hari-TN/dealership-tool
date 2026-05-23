@@ -85,7 +85,7 @@ foreach ($dealershipIds as $dealershipId) {
 
         imagecopyresampled($canvas, $bgImage, $offsetX, $offsetY, 0, 0, $newW, $newH, $bgW, $bgH);
 
-        $panelY = smartPanelPosition($canvas, $canvasW, $canvasH);
+        $panelY = 0;
 
         if (file_exists($panelPath)) {
             $panel = imagecreatefrompng($panelPath);
@@ -120,7 +120,7 @@ foreach ($dealershipIds as $dealershipId) {
                 $lW = imagesx($logo);
                 $lH = imagesy($logo);
 
-                $lScale  = ($canvasW * 0.25) / $lW;
+                $lScale  = ($canvasW * 0.12) / $lW;
                 $lNewW   = (int)($lW * $lScale);
                 $lNewH   = (int)($lH * $lScale);
 
@@ -134,8 +134,10 @@ foreach ($dealershipIds as $dealershipId) {
                 imagecopyresampled($scaledLogo, $logo, 0, 0, 0, 0, $lNewW, $lNewH, $lW, $lH);
 
                 $padding = (int)($canvasW * 0.04);
-                $lX = $padding;
-                $lY = $canvasH - $lNewH - $padding;
+                // AI decides logo position based on image brightness
+                $logoPos = aiDecideLogoPosition($canvas, $canvasW, $canvasH, $lNewW, $lNewH, $padding);
+                $lX = $logoPos['x'];
+                $lY = $logoPos['y'];
 
                 imagecopy($canvas, $scaledLogo, $lX, $lY, 0, 0, $lNewW, $lNewH);
 
@@ -219,15 +221,44 @@ function smartPanelPosition($image, $canvasW, $canvasH) {
     return aiDecidePanelPosition($avgTop, $avgBottom, $canvasH);
 }
 
-function aiDecidePanelPosition($avgTop, $avgBottom, $canvasH) {
-    $apiKey = GROQ_API_KEY;
+function aiDecideLogoPosition($image, $canvasW, $canvasH, $logoW, $logoH, $padding) {
+    // Sample brightness of top-left and top-right corners
+    $sampleSize = (int)($canvasW * 0.25);
+    $stepX = max(1, (int)($sampleSize / 10));
+    $stepY = max(1, (int)($sampleSize / 10));
 
-    $prompt = "I have a background image for a car dealership creative. Top half brightness: {$avgTop}/255, Bottom half brightness: {$avgBottom}/255. Canvas height: {$canvasH}px. I need to place a dealership panel that is 28% of canvas height. What Y coordinate in pixels should I place it to avoid the busiest part of the image? Reply with ONLY a single integer.";
+    $topLeftBrightness  = 0;
+    $topRightBrightness = 0;
+    $samples = 0;
+
+    for ($y = 0; $y < $sampleSize; $y += $stepY) {
+        for ($x = 0; $x < $sampleSize; $x += $stepX) {
+            $rgb = imagecolorat($image, $x, $y);
+            $r = ($rgb >> 16) & 0xFF;
+            $g = ($rgb >> 8)  & 0xFF;
+            $b = $rgb & 0xFF;
+            $topLeftBrightness += (0.299 * $r + 0.587 * $g + 0.114 * $b);
+
+            $rgb = imagecolorat($image, $canvasW - $x - 1, $y);
+            $r = ($rgb >> 16) & 0xFF;
+            $g = ($rgb >> 8)  & 0xFF;
+            $b = $rgb & 0xFF;
+            $topRightBrightness += (0.299 * $r + 0.587 * $g + 0.114 * $b);
+            $samples++;
+        }
+    }
+
+    $avgLeft  = $samples > 0 ? $topLeftBrightness / $samples : 128;
+    $avgRight = $samples > 0 ? $topRightBrightness / $samples : 128;
+
+    // Ask AI which corner is better for logo
+    $apiKey = GROQ_API_KEY;
+    $prompt = "Top-left corner brightness: {$avgLeft}/255, Top-right corner brightness: {$avgRight}/255. For a logo placement on a dealership ad, which corner has more empty space? Reply with only 'left' or 'right'.";
 
     $data = json_encode([
         'model'    => 'llama-3.1-8b-instant',
         'messages' => [['role' => 'user', 'content' => $prompt]],
-        'max_tokens' => 10
+        'max_tokens' => 5
     ]);
 
     $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
@@ -242,18 +273,17 @@ function aiDecidePanelPosition($avgTop, $avgBottom, $canvasH) {
     $response = curl_exec($ch);
     curl_close($ch);
 
+    $position = 'right'; // default
     if ($response) {
         $result = json_decode($response, true);
-        $text   = trim($result['choices'][0]['message']['content'] ?? '');
-        $y      = intval(preg_replace('/[^0-9]/', '', $text));
-        if ($y > 0 && $y < $canvasH) {
-            $minY = (int)($canvasH * 0.40);
-            $maxY = (int)($canvasH * 0.85);
-            return max($minY, min($maxY, $y));
-        }
+        $text   = strtolower(trim($result['choices'][0]['message']['content'] ?? ''));
+        if (strpos($text, 'left') !== false) $position = 'left';
+        if (strpos($text, 'right') !== false) $position = 'right';
     }
 
-    if ($avgBottom > 180) return (int)($canvasH * 0.78);
-    elseif ($avgBottom > 100) return (int)($canvasH * 0.72);
-    else return (int)($canvasH * 0.68);
+    if ($position === 'left') {
+        return ['x' => $padding, 'y' => $padding];
+    } else {
+        return ['x' => $canvasW - $logoW - $padding, 'y' => $padding];
+    }
 }
