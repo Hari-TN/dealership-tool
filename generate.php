@@ -247,7 +247,9 @@ function aiDecidePanelPosition($avgTop, $avgBottom, $canvasH) {
         $text   = trim($result['choices'][0]['message']['content'] ?? '');
         $y      = intval(preg_replace('/[^0-9]/', '', $text));
         if ($y > 0 && $y < $canvasH) {
-            return $y;
+            $minY = (int)($canvasH * 0.40);
+            $maxY = (int)($canvasH * 0.85);
+            return max($minY, min($maxY, $y));
         }
     }
 
