@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
     
-    if ($username === 'admin' && $password === 'admin123') {
+    if ($username === 'admin' && password_verify($password, '$2y$10$EBJRMtKvGgN9xxlVZpx7buyDLnBI4hTKSZT6.YEJq6dqsuSmZj/Ka')) {
         $_SESSION['logged_in'] = true;
         header('Location: index.php');
         exit;

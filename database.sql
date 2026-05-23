@@ -69,4 +69,4 @@ INSERT INTO dealership_assets (dealership_id, asset_type, file_path) VALUES
 
 -- Default admin (password: admin123)
 INSERT INTO admin_users (username, password) VALUES
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+('admin', '$2y$10$EBJRMtKvGgN9xxlVZpx7buyDLnBI4hTKSZT6.YEJq6dqsuSmZj/Ka');
