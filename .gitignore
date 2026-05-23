@@ -6,3 +6,4 @@ uploads/*.png
 uploads/*.jpeg
 database.sqlite
 config.php
+database.sqlite
