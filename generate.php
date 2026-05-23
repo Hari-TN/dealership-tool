@@ -1,8 +1,9 @@
 <?php
 header('Content-Type: application/json');
 
-$uploadDir = '/workspaces/dealership-tool/uploads/';
-$outputDir = '/workspaces/dealership-tool/output/';
+$baseDir   = dirname(__FILE__) . '/';
+$uploadDir = $baseDir . 'uploads/';
+$outputDir = $baseDir . 'output/';
 
 // Get POST data
 $dealershipIds = json_decode($_POST['dealerships'] ?? '[]', true);
@@ -32,7 +33,7 @@ if (!$bgImage) {
 }
 
 // Connect to DB
-$pdo = new PDO('sqlite:/workspaces/dealership-tool/database.sqlite');
+$pdo = new PDO('sqlite:' . $baseDir . 'database.sqlite');
 
 // Output format sizes
 $sizes = [
@@ -61,8 +62,8 @@ foreach ($dealershipIds as $dealershipId) {
         $assets[$row['asset_type']] = $row['file_path'];
     }
 
-    $panelPath = '/workspaces/dealership-tool/' . ($assets['panel'] ?? '');
-    $logoPath  = '/workspaces/dealership-tool/' . ($assets[$logoType] ?? $assets['logo_dark'] ?? '');
+    $panelPath = $baseDir . ($assets['panel'] ?? '');
+    $logoPath  = $baseDir . ($assets[$logoType] ?? $assets['logo_dark'] ?? '');
 
     foreach ($formats as $format) {
         if (!isset($sizes[$format])) continue;
