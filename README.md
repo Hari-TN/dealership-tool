@@ -101,6 +101,7 @@ dealership-tool/
 ├── uploads/                # Temporary background uploads
 ├── .gitignore              
 ├── config.php              # API keys
+├── config.php.example      # API key template
 ├── database.sql            # MySQL schema and seed data
 ├── database.sqlite         # SQLite database (runtime)
 ├── generate.php            # Image generation engine
