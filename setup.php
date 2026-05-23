@@ -11,8 +11,11 @@ $db->exec('CREATE TABLE dealership_assets (id INTEGER PRIMARY KEY AUTOINCREMENT,
 
 $db->exec("INSERT INTO brands (name, slug) VALUES ('Tata','tata'),('Volkswagen','vw')");
 
-$db->exec("INSERT INTO dealerships (brand_id, name, slug) VALUES (1,'Bellad Tata','bellad-tata'),(2,'VW Autobahn','vw-autobhan'),(2,'VW Hubli','vw-hubli'),(2,'VW Apple','vw-apple'),(2,'VW KUN','vw-kun'),(2,'VW Lally','vw-lally')");
-
+$db->exec("INSERT INTO dealerships (brand_id, name, slug) VALUES 
+    (1,'Bellad Tata','bellad-tata'),
+    (2,'VW Autobahn','vw-autobhan'),
+    (2,'VW Hubli','vw-hubli')");
+    
 $db->exec("INSERT INTO dealership_assets (dealership_id, asset_type, file_path) VALUES
 (1,'panel','assets/assets/Dealership-panels/Tata-dealers/Bellad-tata/template.png'),
 (1,'logo_dark','assets/assets/Dealership-panels/Tata-dealers/Bellad-tata/logo-dark.png'),

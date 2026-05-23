@@ -42,10 +42,7 @@ INSERT INTO brands (name, slug) VALUES
 INSERT INTO dealerships (brand_id, name, slug) VALUES
 (1, 'Bellad Tata', 'bellad-tata'),
 (2, 'VW Autobahn', 'vw-autobhan'),
-(2, 'VW Hubli', 'vw-hubli'),
-(2, 'VW Apple', 'vw-apple'),
-(2, 'VW KUN', 'vw-kun'),
-(2, 'VW Lally', 'vw-lally');
+(2, 'VW Hubli', 'vw-hubli');
 
 INSERT INTO dealership_assets (dealership_id, asset_type, file_path) VALUES
 (1, 'panel',      'assets/assets/Dealership-panels/Tata-dealers/Bellad-tata/template.png'),
