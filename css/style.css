@@ -251,3 +251,18 @@ select:focus { border-color: #4361ee; }
     margin-bottom: 16px;
     font-size: 0.9rem;
 }
+
+header { position: relative; }
+.logout-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 8px 16px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.logout-btn:hover { background: #c0392b; }
