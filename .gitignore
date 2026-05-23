@@ -1,0 +1,7 @@
+output/*.jpg
+output/*.png
+output/*.zip
+uploads/*.jpg
+uploads/*.png
+uploads/*.jpeg
+database.sqlite

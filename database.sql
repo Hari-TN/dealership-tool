@@ -1,5 +1,4 @@
 -- Dealership Creative Tool - Database Setup
--- MySQL Compatible
 
 CREATE DATABASE IF NOT EXISTS dealership_tool;
 USE dealership_tool;

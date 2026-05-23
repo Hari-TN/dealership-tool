@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: application/json');
 
-// --- Setup ---
 $uploadDir = '/workspaces/dealership-tool/uploads/';
 $outputDir = '/workspaces/dealership-tool/output/';
 
@@ -22,12 +21,10 @@ if (empty($dealershipIds)) {
     exit;
 }
 
-// Save uploaded background
 $bgExt  = strtolower(pathinfo($_FILES['bg_image']['name'], PATHINFO_EXTENSION));
 $bgPath = $uploadDir . 'bg_' . time() . '.' . $bgExt;
 move_uploaded_file($_FILES['bg_image']['tmp_name'], $bgPath);
 
-// Load background image
 $bgImage = ($bgExt === 'png') ? imagecreatefrompng($bgPath) : imagecreatefromjpeg($bgPath);
 if (!$bgImage) {
     echo json_encode(['error' => 'Could not load background image']);
@@ -44,7 +41,6 @@ $sizes = [
     '1080x1920' => [1080, 1920],
 ];
 
-// Clean output folder
 array_map('unlink', glob($outputDir . '*.jpg'));
 array_map('unlink', glob($outputDir . '*.png'));
 
@@ -72,12 +68,10 @@ foreach ($dealershipIds as $dealershipId) {
         if (!isset($sizes[$format])) continue;
         [$canvasW, $canvasH] = $sizes[$format];
 
-        // Create canvas
         $canvas = imagecreatetruecolor($canvasW, $canvasH);
         imagealphablending($canvas, true);
         imagesavealpha($canvas, true);
 
-        // --- Step 1: Scale and crop background to fill canvas ---
         $bgW = imagesx($bgImage);
         $bgH = imagesy($bgImage);
 
@@ -89,11 +83,8 @@ foreach ($dealershipIds as $dealershipId) {
 
         imagecopyresampled($canvas, $bgImage, $offsetX, $offsetY, 0, 0, $newW, $newH, $bgW, $bgH);
 
-        // --- Step 2: Smart panel positioning (AI feature) ---
-        // Analyze bottom third brightness to decide panel placement
         $panelY = smartPanelPosition($canvas, $canvasW, $canvasH);
 
-        // --- Step 3: Layer dealership panel ---
         if (file_exists($panelPath)) {
             $panel = imagecreatefrompng($panelPath);
             if ($panel) {
@@ -101,7 +92,6 @@ foreach ($dealershipIds as $dealershipId) {
                 $pW = imagesx($panel);
                 $pH = imagesy($panel);
 
-                // Scale panel to canvas width
                 $pScale  = $canvasW / $pW;
                 $pNewW   = $canvasW;
                 $pNewH   = (int)($pH * $pScale);
@@ -121,7 +111,6 @@ foreach ($dealershipIds as $dealershipId) {
             }
         }
 
-        // --- Step 4: Layer logo ---
         if ($logoEnabled && file_exists($logoPath)) {
             $logo = imagecreatefrompng($logoPath);
             if ($logo) {
@@ -129,7 +118,6 @@ foreach ($dealershipIds as $dealershipId) {
                 $lW = imagesx($logo);
                 $lH = imagesy($logo);
 
-                // Scale logo to 25% of canvas width
                 $lScale  = ($canvasW * 0.25) / $lW;
                 $lNewW   = (int)($lW * $lScale);
                 $lNewH   = (int)($lH * $lScale);
@@ -143,7 +131,6 @@ foreach ($dealershipIds as $dealershipId) {
 
                 imagecopyresampled($scaledLogo, $logo, 0, 0, 0, 0, $lNewW, $lNewH, $lW, $lH);
 
-                // Place logo bottom-left with padding (avoids overlapping panel)
                 $padding = (int)($canvasW * 0.04);
                 $lX = $padding;
                 $lY = $canvasH - $lNewH - $padding;
@@ -155,7 +142,6 @@ foreach ($dealershipIds as $dealershipId) {
             }
         }
 
-        // --- Step 5: Save output ---
         $filename = $dealership['slug'] . '_' . $format . '_' . time() . '.jpg';
         $filepath = $outputDir . $filename;
         imagejpeg($canvas, $filepath, 95);
@@ -167,7 +153,7 @@ foreach ($dealershipIds as $dealershipId) {
 
 imagedestroy($bgImage);
 
-// --- Step 6: Create ZIP ---
+//Create ZIP
 $zipPath = $outputDir . 'creatives_' . time() . '.zip';
 $zip = new ZipArchive();
 $zip->open($zipPath, ZipArchive::CREATE);
@@ -193,9 +179,8 @@ echo json_encode([
     'files'    => $fileList,
 ]);
 
-// --- AI Feature: Smart Panel Positioning ---
+// Panel Positioning
 function smartPanelPosition($image, $canvasW, $canvasH) {
-    // Sample brightness of bottom 40% of image
     $sampleY     = (int)($canvasH * 0.6);
     $sampleStepX = max(1, (int)($canvasW / 20));
     $sampleStepY = max(1, (int)($canvasH * 0.4 / 10));
@@ -216,16 +201,11 @@ function smartPanelPosition($image, $canvasW, $canvasH) {
 
     $avgBrightness = $samples > 0 ? $totalBrightness / $samples : 128;
 
-    // If bottom is bright (sky/light bg), push panel lower
-    // If bottom is dark, panel can sit higher
     if ($avgBrightness > 180) {
-        // Very bright bottom — place panel at very bottom
         return (int)($canvasH * 0.78);
     } elseif ($avgBrightness > 100) {
-        // Medium brightness — standard position
         return (int)($canvasH * 0.72);
     } else {
-        // Dark bottom — panel can go a bit higher
         return (int)($canvasH * 0.68);
     }
 }

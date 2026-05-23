@@ -19,13 +19,12 @@ $brands = $pdo->query("SELECT id, name FROM brands ORDER BY name")->fetchAll(PDO
 <body>
 <div class="container">
     <header>
-        <h1>🚗 Dealership Creative Tool</h1>
+        <h1>Dealership Creative Tool</h1>
         <p>Generate dealership creatives in bulk</p>
         <a href="logout.php" class="logout-btn">Logout</a>
     </header>
     <div class="form-card">
 
-        <!-- Step 1: Brand -->
         <div class="form-group">
             <label>1. Select Brand</label>
             <select id="brandSelect">
@@ -36,7 +35,6 @@ $brands = $pdo->query("SELECT id, name FROM brands ORDER BY name")->fetchAll(PDO
             </select>
         </div>
 
-        <!-- Step 2: Dealerships -->
         <div class="form-group" id="dealershipGroup" style="display:none">
             <label>2. Select Dealership(s)</label>
             <div class="select-actions">
@@ -46,7 +44,6 @@ $brands = $pdo->query("SELECT id, name FROM brands ORDER BY name")->fetchAll(PDO
             <div id="dealershipList" class="dealership-list"></div>
         </div>
 
-        <!-- Step 3: Logo -->
         <div class="form-group">
             <label>3. Include Logo?</label>
             <div class="toggle-group">
@@ -62,20 +59,18 @@ $brands = $pdo->query("SELECT id, name FROM brands ORDER BY name")->fetchAll(PDO
             </div>
         </div>
 
-        <!-- Step 4: Background -->
         <div class="form-group">
             <label>4. Upload Background Image</label>
             <div class="upload-area" id="uploadArea">
                 <input type="file" id="bgImage" accept="image/jpeg,image/png" hidden>
                 <div onclick="document.getElementById('bgImage').click()">
-                    <p>📁 Click to upload JPG or PNG</p>
+                    <p>Click to upload JPG or PNG</p>
                     <p class="hint">Original quality maintained</p>
                 </div>
                 <img id="previewImg" src="" alt="Preview" style="display:none">
             </div>
         </div>
 
-        <!-- Step 5: Format -->
         <div class="form-group">
             <label>5. Output Format</label>
             <div class="format-group">
@@ -94,12 +89,10 @@ $brands = $pdo->query("SELECT id, name FROM brands ORDER BY name")->fetchAll(PDO
             </div>
         </div>
 
-        <!-- Generate -->
         <div class="form-group">
-            <button id="generateBtn" onclick="generateCreatives()">⚡ Generate Creatives</button>
+            <button id="generateBtn" onclick="generateCreatives()">Generate Creatives</button>
         </div>
 
-        <!-- Progress -->
         <div id="progressArea" style="display:none">
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -107,9 +100,8 @@ $brands = $pdo->query("SELECT id, name FROM brands ORDER BY name")->fetchAll(PDO
             <p id="progressText">Generating...</p>
         </div>
 
-        <!-- Download -->
         <div id="downloadArea" style="display:none">
-            <a id="downloadLink" href="#" class="download-btn">📦 Download ZIP</a>
+            <a id="downloadLink" href="#" class="download-btn">Download ZIP</a>
         </div>
         <div id="individualDownloads" style="margin-top:15px"></div>
 

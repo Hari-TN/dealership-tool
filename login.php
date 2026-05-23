@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <div class="container">
     <div class="login-card">
-        <h1>🚗 Dealership Creative Tool</h1>
+        <h1>Dealership Creative Tool</h1>
         <p>Sign in to continue</p>
 
         <?php if ($error): ?>
